@@ -67,14 +67,15 @@ module.exports = async (req, res) => {
         // 텍스트 메시지 이벤트인지 확인
         if (event.type === 'message' && event.message && event.message.type === 'text') {
           const userMessage = event.message.text;
+          const replyMessages = notice.getResponseMessage(userMessage);
 
-          // "환영" 키워드 감지
-          if (notice.isTrigger(userMessage)) {
-            console.log(`[트리거 감지] 사용자 메시지: "${userMessage}" -> 공지 발송`);
+          // 일치하는 키워드가 있을 경우 응답 메시지 발송
+          if (replyMessages) {
+            console.log(`[트리거 감지] 사용자 메시지: "${userMessage}" -> 응답 발송`);
             
             await client.replyMessage({
               replyToken: event.replyToken,
-              messages: notice.getNoticeMessage(),
+              messages: replyMessages,
             });
           }
         }
